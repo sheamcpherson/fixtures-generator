@@ -33,6 +33,39 @@ export function generateFixtures(teams, startMondayDate, isDoubleRoundRobin = fa
       .toLowerCase();
   }
 
+  function findNextAvailableDate(home, away, startMonday, homeDayName, globalTeamDateRegistry) {
+    const homeBlackouts = home.blackouts || [];
+    const awayBlackouts = away.blackouts || [];
+    
+    let currentMonday = new Date(startMonday);
+    let weeksSearched = 0;
+    const maxWeeks = 104; // Search up to 2 years ahead
+
+    while (weeksSearched < maxWeeks) {
+      const currentWeekStr = toLocalIsoString(currentMonday);
+      const candidateDate = getExactMatchDate(currentWeekStr, homeDayName);
+      const candidateIsoString = toLocalIsoString(candidateDate);
+
+      // Check if both teams are available on this date (not blackouted and not double-booked)
+      const homeBlackouted = homeBlackouts.includes(candidateIsoString);
+      const awayBlackouted = awayBlackouts.includes(candidateIsoString);
+      const homeDoubleBooked = (globalTeamDateRegistry[`${home.id}_${candidateIsoString}`] || 0) > 0;
+      const awayDoubleBooked = (globalTeamDateRegistry[`${away.id}_${candidateIsoString}`] || 0) > 0;
+
+      if (!homeBlackouted && !awayBlackouted && !homeDoubleBooked && !awayDoubleBooked) {
+        return candidateDate;
+      }
+
+      // Advance to next week and try again
+      currentMonday.setDate(currentMonday.getDate() + 7);
+      weeksSearched++;
+    }
+
+    // Fallback: return the original candidate even if there's a conflict (should rarely happen)
+    const fallbackWeekStr = toLocalIsoString(startMonday);
+    return getExactMatchDate(fallbackWeekStr, homeDayName);
+  }
+
   // Build uniform roster base
   let list = [...teams];
   if (list.length % 2 !== 0) {
@@ -140,26 +173,14 @@ export function generateFixtures(teams, startMondayDate, isDoubleRoundRobin = fa
         }
       }
 
-      let currentMatchWeekMonday = new Date(roundBaseMonday);
-      let matchResolved = false;
-      let exactMatchDateObj = null;
-      let safetyCheck = 52;
-
-      while (!matchResolved && safetyCheck > 0) {
-        safetyCheck--;
-        const currentWeekStr = toLocalIsoString(currentMatchWeekMonday);
-        exactMatchDateObj = getExactMatchDate(currentWeekStr, home.homeDay);
-        const exactIsoString = toLocalIsoString(exactMatchDateObj);
-
-        const homeBlackouts = home.blackouts || [];
-        const awayBlackouts = away.blackouts || [];
-
-        if (homeBlackouts.includes(exactIsoString) || awayBlackouts.includes(exactIsoString)) {
-          currentMatchWeekMonday.setDate(currentMatchWeekMonday.getDate() + 7);
-        } else {
-          matchResolved = true;
-        }
-      }
+      // Use intelligent date search to find the next available date for both teams
+      const exactMatchDateObj = findNextAvailableDate(
+        home,
+        away,
+        roundBaseMonday,
+        home.homeDay,
+        globalTeamDateRegistry
+      );
 
       homeCounts[home.id]++;
       const matchIsoDate = toLocalIsoString(exactMatchDateObj);
