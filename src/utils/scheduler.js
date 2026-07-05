@@ -1,4 +1,4 @@
-export function generateFixtures(teams, startMondayDate, isDoubleRoundRobin = false) {
+export function generateFixtures(teams, startMondayDate, isDoubleRoundRobin = false, enforceWinterPace = false) {
   if (teams.length < 2) return [];
 
   const dayOffsets = {
@@ -229,19 +229,15 @@ export function generateFixtures(teams, startMondayDate, isDoubleRoundRobin = fa
       if (globalTeamDateRegistry[`${match.home.id}_${dateKey}`] > 1) errors.push(`${match.home.name} Double Booked`);
       if (globalTeamDateRegistry[`${match.away.id}_${dateKey}`] > 1) errors.push(`${match.away.name} Double Booked`);
 
-      // B. 33% Winter Threshold Verification
-      // Check Home Team
-      if (match.home.id !== 'BYE') {
-        const homePct = (preNewYearMatchesPerTeam[match.home.id] / totalMatchesPerTeam[match.home.id]) * 100;
-        if (homePct < 33.3) {
-          errors.push(`${match.home.name} Winter Pace low (${Math.round(homePct)}%)`);
+      // B. Conditional 33% Winter Threshold Verification
+      if (enforceWinterPace) {
+        if (match.home.id !== 'BYE') {
+          const homePct = (preNewYearMatchesPerTeam[match.home.id] / totalMatchesPerTeam[match.home.id]) * 100;
+          if (homePct < 33.3) errors.push(`${match.home.name} Winter Pace low (${Math.round(homePct)}%)`);
         }
-      }
-      // Check Away Team
-      if (match.away.id !== 'BYE') {
-        const awayPct = (preNewYearMatchesPerTeam[match.away.id] / totalMatchesPerTeam[match.away.id]) * 100;
-        if (awayPct < 33.3) {
-          errors.push(`${match.away.name} Winter Pace low (${Math.round(awayPct)}%)`);
+        if (match.away.id !== 'BYE') {
+          const awayPct = (preNewYearMatchesPerTeam[match.away.id] / totalMatchesPerTeam[match.away.id]) * 100;
+          if (awayPct < 33.3) errors.push(`${match.away.name} Winter Pace low (${Math.round(awayPct)}%)`);
         }
       }
 

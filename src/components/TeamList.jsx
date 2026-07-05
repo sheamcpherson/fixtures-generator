@@ -42,7 +42,7 @@ function TeamList({ teams, setTeams }) {
     <div className="h-full flex flex-col overflow-hidden">
       <div className="flex justify-between items-center mb-3 pb-1 border-b border-slate-200">
         <h2 className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-          <span>📋</span> Club Directory & Blackouts
+          <span>📋</span> Club List & Blocked Dates
         </h2>
         <span className="bg-slate-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
           {teams.length} Clubs
@@ -51,7 +51,7 @@ function TeamList({ teams, setTeams }) {
 
       {teams.length === 0 ? (
         <div className="text-center text-xs text-slate-400 italic py-6 my-auto">
-          Roster index empty.
+          Club List empty.
         </div>
       ) : (
         <div className="flex-grow overflow-y-auto divide-y divide-slate-100 pr-1 space-y-1">
@@ -74,7 +74,7 @@ function TeamList({ teams, setTeams }) {
                         onClick={() => setActiveManagerId(isManaging ? null : team.id)}
                         className={`font-semibold hover:underline ${numBlackouts > 0 ? 'text-amber-600 font-bold' : 'text-slate-500'}`}
                       >
-                        ⚠️ {numBlackouts} Blackout{numBlackouts !== 1 && 's'}
+                        ⚠️ {numBlackouts} Blocked Date{numBlackouts !== 1 && 's'}
                       </button>
                     </div>
                   </div>
@@ -92,7 +92,7 @@ function TeamList({ teams, setTeams }) {
                     {isManaging && (
                     <div className="bg-slate-50 border border-slate-200 rounded-lg p-2.5 space-y-2 text-[11px] animate-fadeIn">
                         <div className="font-bold text-slate-600 uppercase text-[9px] tracking-wide">
-                        Add Specific Date to Avoid: {/* Changed from Unplayable Week */}
+                        Add Specific Date to Block: {/* Changed from Unplayable Week */}
                         </div>
                         
                         <div className="flex gap-1.5">

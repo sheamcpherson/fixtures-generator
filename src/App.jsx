@@ -11,10 +11,25 @@ function App() {
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   // New State Toggle Configuration Control
   const [isDoubleRound, setIsDoubleRound] = useState(false);
+  const [requireWinterPace, setRequireWinterPace] = useState(false);
 
   const handleGenerate = () => {
+    const chosenDate = new Date(startDate);
+    const currentDay = chosenDate.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    
+    // Calculate how many days to roll back to hit Monday
+    const distanceToMonday = currentDay === 0 ? 6 : currentDay - 1;
+    
+    const normalizedDate = new Date(chosenDate);
+    normalizedDate.setDate(chosenDate.getDate() - distanceToMonday);
+    
+    // Format back to YYYY-MM-DD local string safely
+    const yyyy = normalizedDate.getFullYear();
+    const mm = String(normalizedDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(normalizedDate.getDate()).padStart(2, '0');
+    const trueMondayString = `${yyyy}-${mm}-${dd}`;
     // Pass state switch boolean through to the updated scheduling loop function
-    const generatedSchedule = generateFixtures(teams, startDate, isDoubleRound);
+    const generatedSchedule = generateFixtures(teams, trueMondayString, isDoubleRound, requireWinterPace);
     setFixtures(generatedSchedule);
   };
 
@@ -29,12 +44,9 @@ function App() {
                 Chess League Scheduler
               </h1>
               <p className="text-xs text-slate-500 mt-1 font-medium">
-                Dynamic Round-Robin Fixture Engine
+                Round-Robin Fixture Generation
               </p>
             </div>
-          </div>
-          <div className="bg-slate-100 border border-slate-200 rounded-md px-3 py-1 text-[11px] font-bold tracking-wider text-slate-600 uppercase">
-            Roster Status: Ready
           </div>
         </div>
       </header>
@@ -58,7 +70,7 @@ function App() {
                   </h3>
                 </div>
                 <label className="block text-xs font-bold text-slate-500 mb-1">
-                  League Start Date (Monday)
+                  League Start Day (Monday)
                 </label>
                 <input
                   type="date"
@@ -69,32 +81,46 @@ function App() {
               </div>
 
               {/* Toggle Selector Switch Component */}
+              {/* Inside the Schedule Rules Card inside src/App.jsx */}
               <div className="pt-2 border-t border-slate-200">
-                <span className="block text-xs font-bold text-slate-500 mb-2">Competition Structure</span>
+                <span className="block text-xs font-bold text-slate-500 mb-2">Round Robin Format</span>
                 <div className="bg-white p-1 rounded-lg border border-slate-200 flex gap-1">
                   <button
                     type="button"
                     onClick={() => setIsDoubleRound(false)}
                     className={`flex-1 text-center py-1.5 rounded-md font-bold text-[11px] uppercase tracking-wide transition ${
-                      !isDoubleRound 
-                        ? 'bg-slate-900 text-white shadow-xs' 
-                        : 'text-slate-500 hover:bg-slate-50'
+                      !isDoubleRound ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-500 hover:bg-slate-50'
                     }`}
                   >
-                    Single R-R
+                    Single
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsDoubleRound(true)}
                     className={`flex-1 text-center py-1.5 rounded-md font-bold text-[11px] uppercase tracking-wide transition ${
-                      isDoubleRound 
-                        ? 'bg-slate-900 text-white shadow-xs' 
-                        : 'text-slate-500 hover:bg-slate-50'
+                      isDoubleRound ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-500 hover:bg-slate-50'
                     }`}
                   >
-                    Double R-R
+                    Double
                   </button>
                 </div>
+              </div>
+
+              {/* NEW: 33% Pace Checkbox Control Panel Option */}
+              <div className="pt-3 border-t border-slate-200/60 flex items-start gap-2.5 mt-2">
+                <input
+                  id="winterPaceCheckbox"
+                  type="checkbox"
+                  checked={requireWinterPace}
+                  onChange={(e) => setRequireWinterPace(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer accent-slate-900"
+                />
+                <label htmlFor="winterPaceCheckbox" className="select-none cursor-pointer">
+                  <span className="block text-xs font-bold text-slate-700">Require 33% Winter Pace</span>
+                  <span className="block text-[10px] text-slate-400 font-medium leading-tight mt-0.5">
+                    Flags teams playing less than 33% of matches before Jan 1st.
+                  </span>
+                </label>
               </div>
             </div>
             
@@ -102,7 +128,7 @@ function App() {
               onClick={handleGenerate}
               className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm transform active:scale-[0.99] transition text-xs uppercase tracking-wider mt-4"
             >
-              ⚡ Generate Schedule Tree
+              ⚡ Generate Schedule
             </button>
           </div>
 
@@ -116,11 +142,11 @@ function App() {
         {/* Bottom Section: Wide Plan Grid */}
         <div className="border-t border-slate-200/60 pt-6">
           {fixtures.length > 0 ? (
-            <FixtureGrid fixtures={fixtures} setFixtures={setFixtures} />
+            <FixtureGrid fixtures={fixtures} setFixtures={setFixtures} requireWinterPace={requireWinterPace}/>
           ) : (
             <div className="bg-white rounded-xl border border-slate-200 p-12 text-center flex flex-col items-center justify-center shadow-xs">
               <span className="text-3xl text-slate-300 mb-2">🗺️</span>
-              <h3 className="text-sm font-bold text-slate-700">Roster System Standby</h3>
+              <h3 className="text-sm font-bold text-slate-700">Generated Fixtures</h3>
               <p className="text-xs text-slate-400 mt-1 max-w-sm">
                 Confirm your parameters in the panels above and click generate to process the team calendars.
               </p>

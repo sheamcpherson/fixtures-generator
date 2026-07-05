@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function FixtureGrid({ fixtures, setFixtures }) {
+function FixtureGrid({ fixtures, setFixtures, requireWinterPace }) {
   // State to track which team's schedule we are viewing
   const [selectedTeamId, setSelectedTeamId] = useState('');
 
@@ -109,11 +109,13 @@ function FixtureGrid({ fixtures, setFixtures }) {
         if (globalTeamDateRegistry[`${m.home.id}_${m.isoDate}`] > 1) errors.push(`${m.home.name} Double Booked`);
         if (globalTeamDateRegistry[`${m.away.id}_${m.isoDate}`] > 1) errors.push(`${m.away.name} Double Booked`);
 
-        const homePct = (preNewYearMatchesPerTeam[m.home.id] / totalMatchesPerTeam[m.home.id]) * 100;
-        if (homePct < 33.3) errors.push(`${m.home.name} Winter Pace low (${Math.round(homePct)}%)`);
+        if (requireWinterPace) {
+          const homePct = (preNewYearMatchesPerTeam[m.home.id] / totalMatchesPerTeam[m.home.id]) * 100;
+          if (homePct < 33.3) errors.push(`${m.home.name} Winter Pace low (${Math.round(homePct)}%)`);
 
-        const awayPct = (preNewYearMatchesPerTeam[m.away.id] / totalMatchesPerTeam[m.away.id]) * 100;
-        if (awayPct < 33.3) errors.push(`${m.away.name} Winter Pace low (${Math.round(awayPct)}%)`);
+          const awayPct = (preNewYearMatchesPerTeam[m.away.id] / totalMatchesPerTeam[m.away.id]) * 100;
+          if (awayPct < 33.3) errors.push(`${m.away.name} Winter Pace low (${Math.round(awayPct)}%)`);
+        }
 
         return {
           ...m,
@@ -147,9 +149,9 @@ function FixtureGrid({ fixtures, setFixtures }) {
         {/* Component Header Block */}
         <div className="p-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
           <h2 className="text-xs font-black text-slate-700 tracking-wide uppercase">
-            🎯 Strategic Team Planner
+            🎯 Team Fixtures
           </h2>
-          <span className="text-[11px] text-slate-400 font-medium">Select a club below to view their tailored roadmap</span>
+          <span className="text-[11px] text-slate-400 font-medium">Select a club below to view their fixtures</span>
         </div>
         
         {/* Horizontal Navigation Tabs */}
@@ -235,11 +237,11 @@ function FixtureGrid({ fixtures, setFixtures }) {
                   {isHome ? (
                     <span className="inline-flex items-center gap-1.5 bg-emerald-50 border border-emerald-200/60 text-emerald-700 font-bold px-3 py-1 rounded-full text-xs shadow-2xs">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                      🏠 Home Ground
+                      Home
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1.5 bg-slate-50 border border-slate-200 text-slate-500 font-medium px-3 py-1 rounded-full text-xs">
-                      Away Match
+                      Away
                     </span>
                   )}
                 </div>

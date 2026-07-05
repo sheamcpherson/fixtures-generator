@@ -18,7 +18,7 @@ function TeamForm({ teams, setTeams }) {
     setTeamName('');
   };
 
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
   return (
     <form onSubmit={handleSubmit} className="h-full flex flex-col justify-between space-y-3">
@@ -31,7 +31,7 @@ function TeamForm({ teams, setTeams }) {
             type="text"
             value={teamName}
             onChange={(e) => setTeamName(e.target.value)}
-            placeholder="e.g., Marshall Attack CC"
+            placeholder="e.g., Bellshill A"
             className="w-full px-3 py-1.5 border border-slate-200 bg-slate-50 rounded-lg text-sm focus:bg-white focus:ring-1 focus:ring-slate-900 focus:outline-none transition"
             required
           />
@@ -44,7 +44,7 @@ function TeamForm({ teams, setTeams }) {
             className="w-full px-3 py-1.5 border border-slate-200 bg-slate-50 rounded-lg text-sm focus:bg-white focus:outline-none cursor-pointer font-medium text-slate-600"
           >
             {daysOfWeek.map((day) => (
-              <option key={day} value={day}>🏠 {day}s</option>
+              <option key={day} value={day}>🏠 {day}</option>
             ))}
           </select>
         </div>
