@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react' // or '@vitejs/react-vite' depending on your setup
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: '/fixtures-generator/', // 👈 MUST match your GitHub repository name exactly
 })
