@@ -3,10 +3,9 @@ import TeamForm from './components/TeamForm';
 import TeamList from './components/TeamList';
 import FixtureGrid from './components/FixtureGrid';
 import { generateFixtures } from './utils/scheduler';
-import { mockTeams } from './data/mockTeams';
 
 function App() {
-  const [teams, setTeams] = useState(mockTeams);
+  const [teams, setTeams] = useState([]);
   const [fixtures, setFixtures] = useState([]);
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   // New State Toggle Configuration Control
