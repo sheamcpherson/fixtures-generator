@@ -21,7 +21,7 @@ export function generateFixtures(teams, startMondayDate, isDoubleRoundRobin = fa
   }
 
   function formatDisplayDate(dateObj) {
-    return dateObj.toLocaleDateString('en-US', {
+    return dateObj.toLocaleDateString('en-GB', {
       weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
     });
   }
@@ -224,8 +224,8 @@ export function generateFixtures(teams, startMondayDate, isDoubleRoundRobin = fa
       const errors = [];
 
       // A. Standard overlap validations
-      if (homeBlackouts.includes(dateKey)) errors.push(`${match.home.name} Blackout`);
-      if (awayBlackouts.includes(dateKey)) errors.push(`${match.away.name} Blackout`);
+      if (homeBlackouts.includes(dateKey)) errors.push(`${match.home.name} Blocked`);
+      if (awayBlackouts.includes(dateKey)) errors.push(`${match.away.name} Blocked`);
       if (globalTeamDateRegistry[`${match.home.id}_${dateKey}`] > 1) errors.push(`${match.home.name} Double Booked`);
       if (globalTeamDateRegistry[`${match.away.id}_${dateKey}`] > 1) errors.push(`${match.away.name} Double Booked`);
 

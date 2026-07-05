@@ -45,8 +45,8 @@ function FixtureGrid({ fixtures, setFixtures, requireWinterPace }) {
     const [year, month, day] = newDateString.split('-').map(Number);
     const parsedDate = new Date(year, month - 1, day);
     
-    const formattedDisplayDate = parsedDate.toLocaleDateString('en-US', { 
-      weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' 
+    const formattedDisplayDate = parsedDate.toLocaleDateString('en-GB', { 
+      weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' 
     });
 
     let updatedFixtures = fixtures.map(roundObj => {

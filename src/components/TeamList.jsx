@@ -116,7 +116,7 @@ function TeamList({ teams, setTeams }) {
                       <div className="flex flex-wrap gap-1 pt-1 border-t border-slate-200/60">
                         {team.blackouts.map(dateStr => {
                           // Format date slightly cleaner for the micro badge display (e.g. "Oct 12")
-                          const badgeLabel = new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+                          const badgeLabel = new Date(dateStr).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', timeZone: 'UTC' });
                           return (
                             <span 
                               key={dateStr}
